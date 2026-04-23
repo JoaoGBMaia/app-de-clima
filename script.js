@@ -33,6 +33,8 @@ const featuredCities = [
   }
 ];
 
+const DEGREE = "\u00B0";
+
 const state = {
   selectedLocation: featuredCities[0],
   dailyForecast: [],
@@ -52,6 +54,7 @@ const elements = {
   heroMaxTemp: document.getElementById("heroMaxTemp"),
   heroMinTemp: document.getElementById("heroMinTemp"),
   heroAqiLabel: document.getElementById("heroAqiLabel"),
+  heroIconBadge: document.getElementById("heroIconBadge"),
   wind: document.getElementById("windInfo"),
   humidity: document.getElementById("humidityInfo"),
   pressure: document.getElementById("pressureInfo"),
@@ -78,7 +81,11 @@ const elements = {
   humidityRing: document.getElementById("humidityRing"),
   citySearch: document.getElementById("citySearch"),
   toggleTheme: document.getElementById("toggleTheme"),
-  statusMessage: document.getElementById("statusMessage")
+  statusMessage: document.getElementById("statusMessage"),
+  snapshotPressure: document.getElementById("snapshotPressure"),
+  snapshotVisibility: document.getElementById("snapshotVisibility"),
+  snapshotUv: document.getElementById("snapshotUv"),
+  snapshotHighlight: document.getElementById("snapshotHighlight")
 };
 
 const weekdayFormatter = new Intl.DateTimeFormat("pt-BR", { weekday: "long" });
@@ -135,12 +142,6 @@ function iconMarkup(type) {
     moon: `
       <svg class="weather-icon" viewBox="0 0 64 64" aria-hidden="true">
         <path class="moon-shape" d="M40.7 11c-9.7 1.5-17 9.9-17 20s7.3 18.5 17 20a20 20 0 1 1 0-40Z"></path>
-      </svg>
-    `,
-    sunrise: `
-      <svg class="weather-icon" viewBox="0 0 64 64" aria-hidden="true">
-        <path class="sun-ray" d="M12 47h40M18 39h4M42 39h4M25 18l3 4M39 18l-3 4"></path>
-        <path class="sun-core" d="M20 39a12 12 0 0 1 24 0"></path>
       </svg>
     `
   };
@@ -323,7 +324,7 @@ function getDominantPollutant(reading) {
 function buildDayHighlight(dayWeather, airQualityReading) {
   const weather = getWeatherPresentation(dayWeather.code, true).label.toLowerCase();
   const aqiLabel = getAqiLabel(airQualityReading.aqi).toLowerCase();
-  return `Dia com ${weather}, maxima de ${dayWeather.maxTemp}° e ar ${aqiLabel}.`;
+  return `Dia com ${weather}, maxima de ${dayWeather.maxTemp}${DEGREE} e ar ${aqiLabel}.`;
 }
 
 function renderCities(results) {
@@ -362,7 +363,7 @@ function renderForecast() {
           <span class="day-name">${item.dayLabel}</span>
           <span class="icon">${iconMarkup(item.icon)}</span>
           <span class="forecast-summary">${item.summary}</span>
-          <span class="temps"><strong>${item.maxTemp}°</strong><span>${item.minTemp}°</span></span>
+          <span class="temps"><strong>${item.maxTemp}${DEGREE}</strong><span>${item.minTemp}${DEGREE}</span></span>
         </button>
       `;
     })
@@ -409,7 +410,7 @@ function buildChart(hourlyItems) {
       .map(
         (point) => `
           <circle cx="${point.x}" cy="${point.y}" r="5" fill="#ffd5ab" stroke="#ffb564" stroke-width="2"></circle>
-          <text x="${point.x}" y="${point.y - 14}" text-anchor="middle" fill="#edf4ff" font-size="16">${point.item.temp}°</text>
+          <text x="${point.x}" y="${point.y - 14}" text-anchor="middle" fill="#edf4ff" font-size="16">${point.item.temp}${DEGREE}</text>
         `
       )
       .join("")}
@@ -420,7 +421,7 @@ function buildChart(hourlyItems) {
       (item) => `
         <div class="hourly-item">
           <strong>${item.hourShort}</strong>
-          <span>${item.temp}°</span>
+          <span>${item.temp}${DEGREE}</span>
         </div>
       `
     )
@@ -452,11 +453,24 @@ function updateDetailPanels() {
 
   elements.humidityValue.textContent = `${Math.round(humidityAverage)}%`;
   elements.humidityLabel.textContent = getHumidityLabel(Math.round(humidityAverage));
-  elements.humidityDescription.textContent = `Pico de umidade entre ${selectedDay.minTemp}° e ${selectedDay.maxTemp}° ao longo do dia.`;
-  elements.dewPoint.textContent = `${Math.round(dewPointAverage)}°C`;
+  elements.humidityDescription.textContent = `Pico de umidade entre ${selectedDay.minTemp}${DEGREE} e ${selectedDay.maxTemp}${DEGREE} ao longo do dia.`;
+  elements.dewPoint.textContent = `${Math.round(dewPointAverage)}${DEGREE}C`;
 
   elements.aqiRing.style.setProperty("--ring-angle", `${Math.min(airQualityReading.aqi, 100) * 3.6}deg`);
   elements.humidityRing.style.setProperty("--ring-angle", `${Math.min(Math.round(humidityAverage), 100) * 3.6}deg`);
+
+  if (elements.snapshotPressure) {
+    elements.snapshotPressure.textContent = elements.pressure.textContent;
+  }
+  if (elements.snapshotVisibility) {
+    elements.snapshotVisibility.textContent = elements.visibility.textContent;
+  }
+  if (elements.snapshotUv) {
+    elements.snapshotUv.textContent = elements.uv.textContent;
+  }
+  if (elements.snapshotHighlight) {
+    elements.snapshotHighlight.textContent = elements.dayHighlight.textContent;
+  }
 
   buildChart(selectedDay.chartPoints);
 }
@@ -469,12 +483,15 @@ function renderWeather() {
   elements.date.textContent = formatDateLabel(today.date);
   elements.temp.textContent = today.currentTemp;
   elements.condition.textContent = currentPresentation.label;
-  elements.range.textContent = `Sensacao de ${today.feelsLike}° - Max ${today.maxTemp}° - Min ${today.minTemp}°`;
+  elements.range.textContent = `Sensacao de ${today.feelsLike}${DEGREE} - Max ${today.maxTemp}${DEGREE} - Min ${today.minTemp}${DEGREE}`;
   if (elements.heroMaxTemp) {
     elements.heroMaxTemp.textContent = today.maxTemp;
   }
   if (elements.heroMinTemp) {
     elements.heroMinTemp.textContent = today.minTemp;
+  }
+  if (elements.heroIconBadge) {
+    elements.heroIconBadge.innerHTML = iconMarkup(currentPresentation.icon);
   }
   elements.wind.textContent = `${today.windSpeed} km/h ${degreesToCompass(today.windDirection)}`;
   elements.humidity.textContent = `${today.currentHumidity}%`;
@@ -538,8 +555,8 @@ function hydrateDailyForecast(weatherPayload, airQualityPayload) {
       feelsLike: date === current.time.split("T")[0] ? Math.round(current.apparent_temperature) : Math.round(daily.temperature_2m_max[index] - 1),
       currentCode: date === current.time.split("T")[0] ? current.weather_code : daily.weather_code[index],
       isDay: date === current.time.split("T")[0] ? Boolean(current.is_day) : true,
-      windSpeed: date === current.time.split("T")[0] ? Math.round(current.wind_speed_10m) : Math.round(current.wind_speed_10m),
-      windDirection: date === current.time.split("T")[0] ? Math.round(current.wind_direction_10m) : Math.round(current.wind_direction_10m),
+      windSpeed: Math.round(current.wind_speed_10m),
+      windDirection: Math.round(current.wind_direction_10m),
       currentHumidity,
       pressure: Math.round(current.surface_pressure),
       visibilityKm: Math.max(1, Math.round((current.visibility || 10000) / 1000)),
