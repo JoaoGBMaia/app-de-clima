@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skyline Weather</title>
+    <meta
+      name="description"
+      content="Aplicativo de clima para portfolio com previsao detalhada, qualidade do ar e destaques do dia."
+    />
+    <meta name="theme-color" content="#173961" />
+    <meta property="og:title" content="Skyline Weather" />
+    <meta
+      property="og:description"
+      content="App de clima para portfolio com dados reais, previsao detalhada e visual premium."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="ambient ambient-left"></div>
+      <div class="ambient ambient-right"></div>
+
+      <header class="topbar">
+        <a class="brand" href="#home" aria-label="Skyline Weather">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img">
+              <path
+                d="M34 18a10 10 0 0 0-19.6-2.8A8.6 8.6 0 0 0 15 32h18.2a7.4 7.4 0 0 0 .8-14.8Z"
+                fill="currentColor"
+              ></path>
+              <circle cx="35" cy="13" r="6" fill="#ffcb6b"></circle>
+            </svg>
+          </span>
+          <span class="brand-text">Skyline</span>
+        </a>
+
+        <nav class="topnav" aria-label="Principal">
+          <a class="is-active" href="#weather">Weather</a>
+          <a href="#highlights">Highlights</a>
+          <a href="#air-quality">Air Quality</a>
+          <a href="#about">About</a>
+        </nav>
+
+        <button class="ghost-button" type="button" id="toggleTheme" aria-label="Alternar atmosfera">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 3v2.2M12 18.8V21M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M3 12h2.2M18.8 12H21M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="1.6"
+            ></path>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+          </svg>
+        </button>
+      </header>
+
+      <main id="home">
+        <section class="hero-grid" id="weather">
+          <article class="hero-card glass-panel">
+            <div class="hero-copy">
+              <p class="eyebrow" id="currentCity">Sao Paulo, BR</p>
+              <p class="meta-line" id="currentDate">Quinta-feira, 23 de abril</p>
+              <div class="temperature-block">
+                <span class="temperature-number" id="currentTemp">26</span>
+                <span class="temperature-unit">°C</span>
+              </div>
+              <p class="condition" id="currentCondition">Parcialmente nublado</p>
+              <p class="range" id="currentRange">Sensacao de 28° • Max 29° • Min 19°</p>
+            </div>
+
+            <div class="hero-visual" aria-hidden="true">
+              <div class="sun"></div>
+              <div class="cloud cloud-large"></div>
+              <div class="cloud cloud-small"></div>
+            </div>
+
+            <dl class="weather-stats">
+              <div>
+                <dt>Vento</dt>
+                <dd id="windInfo">12 km/h NE</dd>
+              </div>
+              <div>
+                <dt>Umidade</dt>
+                <dd id="humidityInfo">72%</dd>
+              </div>
+              <div>
+                <dt>Pressao</dt>
+                <dd id="pressureInfo">1014 hPa</dd>
+              </div>
+              <div>
+                <dt>Visibilidade</dt>
+                <dd id="visibilityInfo">10 km</dd>
+              </div>
+              <div>
+                <dt>UV</dt>
+                <dd id="uvInfo">3 moderado</dd>
+              </div>
+            </dl>
+          </article>
+
+          <aside class="search-panel glass-panel">
+            <label class="searchbox" for="citySearch">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+                <path
+                  d="m16 16 4.3 4.3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-width="1.8"
+                ></path>
+              </svg>
+              <input
+                id="citySearch"
+                type="search"
+                placeholder="Buscar cidade ou localizacao..."
+                autocomplete="off"
+              />
+            </label>
+            <div class="city-pills" id="citySuggestions" aria-label="Sugestoes de cidades"></div>
+            <div class="intro-copy">
+              <p>
+                Agora com dados reais de clima e qualidade do ar via Open-Meteo, mantendo a direcao visual de um app de portfolio.
+              </p>
+            </div>
+            <p class="status-message" id="statusMessage" role="status" aria-live="polite"></p>
+          </aside>
+        </section>
+
+        <section class="forecast-strip" aria-labelledby="forecastTitle">
+          <div class="section-heading">
+            <h2 id="forecastTitle">Proximos dias</h2>
+            <p>Selecione um dia para atualizar grafico, destaques e indicadores.</p>
+          </div>
+          <div class="forecast-cards" id="forecastCards"></div>
+        </section>
+
+        <section class="dashboard-grid" id="highlights">
+          <article class="chart-card glass-panel">
+            <div class="section-heading">
+              <h2>Temperatura por hora</h2>
+              <p id="chartSubtitle">Tendencia ao longo do dia</p>
+            </div>
+            <div class="chart-wrap">
+              <svg id="hourlyChart" viewBox="0 0 640 260" role="img" aria-label="Grafico de temperatura"></svg>
+            </div>
+            <div class="hourly-legend" id="hourlyLegend"></div>
+          </article>
+
+          <article class="metric-card glass-panel" id="air-quality">
+            <div class="section-heading">
+              <h2>Qualidade do ar</h2>
+              <p>Conforto para atividades ao ar livre.</p>
+            </div>
+            <div class="ring-layout">
+              <div class="ring" id="aqiRing">
+                <div>
+                  <strong id="aqiValue">32</strong>
+                  <span id="aqiLabel">Boa</span>
+                </div>
+              </div>
+              <div class="metric-copy">
+                <p id="aqiDescription">Indice baixo, ideal para caminhar no fim da tarde.</p>
+                <p><span>Poluente principal</span><strong id="aqiPollutant">O3</strong></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="metric-card glass-panel">
+            <div class="section-heading">
+              <h2>Umidade</h2>
+              <p>Nivel de conforto atual.</p>
+            </div>
+            <div class="ring-layout">
+              <div class="ring ring-blue" id="humidityRing">
+                <div>
+                  <strong id="humidityValue">72%</strong>
+                  <span id="humidityLabel">Confortavel</span>
+                </div>
+              </div>
+              <div class="metric-copy">
+                <p id="humidityDescription">Ar agradavel para o periodo da manha.</p>
+                <p><span>Ponto de orvalho</span><strong id="dewPoint">17°C</strong></p>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="highlights-row glass-panel">
+          <article>
+            <span class="mini-label">Nascer do sol</span>
+            <strong id="sunriseTime">06:12</strong>
+          </article>
+          <article>
+            <span class="mini-label">Por do sol</span>
+            <strong id="sunsetTime">17:43</strong>
+          </article>
+          <article>
+            <span class="mini-label">Fase da lua</span>
+            <strong id="moonPhase">Lua crescente</strong>
+          </article>
+          <article>
+            <span class="mini-label">Resumo do dia</span>
+            <strong id="dayHighlight">Manha fresca, tarde iluminada e noite estavel.</strong>
+          </article>
+        </section>
+
+        <section class="about-panel glass-panel" id="about">
+          <div class="section-heading">
+            <h2>Projeto de portfolio</h2>
+            <p>Feito para demonstrar design visual, composicao de dados e interacao em front-end.</p>
+          </div>
+          <div class="about-grid">
+            <article>
+              <h3>Experiencia</h3>
+              <p>Busca entre cidades, previsao por hora em SVG, cards com estado ativo e alternancia de atmosfera.</p>
+            </article>
+            <article>
+              <h3>Visual</h3>
+              <p>Inspirado em dashboards editoriais com profundidade, vidro fosco e um fundo de ceu ao amanhecer.</p>
+            </article>
+            <article>
+              <h3>Publicacao</h3>
+              <p>Estrutura simples em arquivos estaticos, ideal para GitHub Pages, Netlify ou Vercel Static Hosting.</p>
+            </article>
+            <article>
+              <h3>Dados ao vivo</h3>
+              <p>Busca geocodificada e previsoes em tempo real com atribuicao ao Open-Meteo para facilitar deploy sem backend.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
