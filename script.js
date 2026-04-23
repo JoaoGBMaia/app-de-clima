@@ -49,6 +49,9 @@ const elements = {
   temp: document.getElementById("currentTemp"),
   condition: document.getElementById("currentCondition"),
   range: document.getElementById("currentRange"),
+  heroMaxTemp: document.getElementById("heroMaxTemp"),
+  heroMinTemp: document.getElementById("heroMinTemp"),
+  heroAqiLabel: document.getElementById("heroAqiLabel"),
   wind: document.getElementById("windInfo"),
   humidity: document.getElementById("humidityInfo"),
   pressure: document.getElementById("pressureInfo"),
@@ -358,7 +361,7 @@ function renderForecast() {
         <button class="${classes}" type="button" data-day-index="${index}">
           <span class="day-name">${item.dayLabel}</span>
           <span class="icon">${iconMarkup(item.icon)}</span>
-          <span>${item.summary}</span>
+          <span class="forecast-summary">${item.summary}</span>
           <span class="temps"><strong>${item.maxTemp}°</strong><span>${item.minTemp}°</span></span>
         </button>
       `;
@@ -441,6 +444,9 @@ function updateDetailPanels() {
 
   elements.aqiValue.textContent = airQualityReading.aqi;
   elements.aqiLabel.textContent = getAqiLabel(airQualityReading.aqi);
+  if (elements.heroAqiLabel) {
+    elements.heroAqiLabel.textContent = getAqiLabel(airQualityReading.aqi);
+  }
   elements.aqiDescription.textContent = getAqiDescription(airQualityReading.aqi);
   elements.aqiPollutant.textContent = getDominantPollutant(airQualityReading);
 
@@ -463,7 +469,13 @@ function renderWeather() {
   elements.date.textContent = formatDateLabel(today.date);
   elements.temp.textContent = today.currentTemp;
   elements.condition.textContent = currentPresentation.label;
-  elements.range.textContent = `Sensacao de ${today.feelsLike}° • Max ${today.maxTemp}° • Min ${today.minTemp}°`;
+  elements.range.textContent = `Sensacao de ${today.feelsLike}° - Max ${today.maxTemp}° - Min ${today.minTemp}°`;
+  if (elements.heroMaxTemp) {
+    elements.heroMaxTemp.textContent = today.maxTemp;
+  }
+  if (elements.heroMinTemp) {
+    elements.heroMinTemp.textContent = today.minTemp;
+  }
   elements.wind.textContent = `${today.windSpeed} km/h ${degreesToCompass(today.windDirection)}`;
   elements.humidity.textContent = `${today.currentHumidity}%`;
   elements.pressure.textContent = `${today.pressure} hPa`;
