@@ -611,6 +611,43 @@ input {
   margin-top: 22px;
 }
 
+.project-links {
+  display: flex;
+  gap: 14px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 138px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.project-link:hover,
+.project-link:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 213, 171, 0.4);
+}
+
+.primary-link {
+  background: linear-gradient(135deg, rgba(255, 181, 100, 0.3), rgba(255, 181, 100, 0.18));
+  border-color: rgba(255, 193, 127, 0.44);
+}
+
+.portfolio-footer {
+  padding: 22px 6px 8px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
 .about-grid article {
   padding: 22px;
   border-radius: 24px;
